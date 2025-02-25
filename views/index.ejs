@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drawing App</title>
+    <style>
+      /* Remove default margins and padding */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      /* Fullscreen canvas */
+      canvas {
+        display: block;
+        background-color: black;
+        position: relative;
+      }
+      /* Overlay controls on top of the canvas */
+      .controls {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 5px;
+        border-radius: 5px;
+      }
+      .controls input,
+      .controls button {
+        margin-right: 5px;
+        vertical-align: middle;
+      }
+      .controls label {
+        margin-right: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <div class="controls">
+      <input type="color" id="colorPicker" value="#ffffff" />
+      <button id="eraserBtn">Toggle Eraser</button>
+      <br /><br />
+      <label for="pencilSize">Pencil Size:</label>
+      <input type="range" id="pencilSize" min="1" max="20" value="2" />
+      <label for="eraserSize">Eraser Size:</label>
+      <input type="range" id="eraserSize" min="5" max="50" value="10" />
+    </div>
+    <script src="/js/script.js"></script>
+  </body>
+</html>
