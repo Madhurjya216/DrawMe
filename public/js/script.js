@@ -52,24 +52,32 @@ eraserSizeSlider.addEventListener('input', (e) => {
   currentEraserSize = parseInt(e.target.value, 10);
 });
 
-// Mouse event listeners for drawing
+// Event Listeners for Mouse
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('mouseout', stopDrawing);
 
+// Event Listeners for Touch (Mobile)
+canvas.addEventListener('touchstart', (e) => startDrawing(e.touches[0]));
+canvas.addEventListener('touchmove', (e) => {
+  draw(e.touches[0]);
+  e.preventDefault(); // Prevent scrolling while drawing
+});
+canvas.addEventListener('touchend', stopDrawing);
+
 function startDrawing(e) {
   drawing = true;
-  lastX = e.offsetX;
-  lastY = e.offsetY;
+  lastX = e.offsetX || e.clientX - canvas.offsetLeft;
+  lastY = e.offsetY || e.clientY - canvas.offsetTop;
   ctx.beginPath();
   ctx.moveTo(lastX, lastY);
 }
 
 function draw(e) {
   if (!drawing) return;
-  const currentX = e.offsetX;
-  const currentY = e.offsetY;
+  const currentX = e.offsetX || e.clientX - canvas.offsetLeft;
+  const currentY = e.offsetY || e.clientY - canvas.offsetTop;
   ctx.lineTo(currentX, currentY);
   
   if (isErasing) {
