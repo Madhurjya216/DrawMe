@@ -52,32 +52,52 @@ eraserSizeSlider.addEventListener('input', (e) => {
   currentEraserSize = parseInt(e.target.value, 10);
 });
 
+// Helper: get canvas-relative coordinates from mouse or touch event
+function getCoords(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const clientX = e.clientX;
+  const clientY = e.clientY;
+  return {
+    x: (clientX - rect.left) * scaleX,
+    y: (clientY - rect.top) * scaleY,
+  };
+}
+
 // Event Listeners for Mouse
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('mouseout', stopDrawing);
 
-// Event Listeners for Touch (Mobile)
-canvas.addEventListener('touchstart', (e) => startDrawing(e.touches[0]));
+// Event Listeners for Touch (Mobile/Tablet)
+// { passive: false } is required so that e.preventDefault() actually works
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault(); // Prevent tap highlight, long-press menu, and scroll
+  startDrawing(e.touches[0]);
+}, { passive: false });
 canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault(); // Prevent page scroll while drawing
   draw(e.touches[0]);
-  e.preventDefault(); // Prevent scrolling while drawing
-});
-canvas.addEventListener('touchend', stopDrawing);
+}, { passive: false });
+canvas.addEventListener('touchend', (e) => {
+  e.preventDefault();
+  stopDrawing();
+}, { passive: false });
 
 function startDrawing(e) {
   drawing = true;
-  lastX = e.offsetX || e.clientX - canvas.offsetLeft;
-  lastY = e.offsetY || e.clientY - canvas.offsetTop;
+  const { x, y } = getCoords(e);
+  lastX = x;
+  lastY = y;
   ctx.beginPath();
   ctx.moveTo(lastX, lastY);
 }
 
 function draw(e) {
   if (!drawing) return;
-  const currentX = e.offsetX || e.clientX - canvas.offsetLeft;
-  const currentY = e.offsetY || e.clientY - canvas.offsetTop;
+  const { x: currentX, y: currentY } = getCoords(e);
   ctx.lineTo(currentX, currentY);
   
   if (isErasing) {
